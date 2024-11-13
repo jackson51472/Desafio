@@ -1,85 +1,79 @@
+package Desafio2;
+
 import java.util.ArrayList;
 
-public class SnakePathFinder {
+public class Challenge {
 
     public static ArrayList<ArrayList<Integer>> findSnakeOnGrid(ArrayList<String> grid) {
-        int rows = grid.size();
-        int cols = grid.get(0).length();
-        ArrayList<ArrayList<Integer>> path = new ArrayList<>();
+        int linhas = grid.size();
+        int colunas = grid.get(0).length();
 
-        // Encontra a posição da cabeça da cobra
-        int headX = -1, headY = -1;
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                if (grid.get(y).charAt(x) == 'h') {
-                    headX = x;
-                    headY = y;
+        ArrayList<ArrayList<Character>> matriz = new ArrayList<>();
+
+        for (int i = 0; i < linhas; i++) {
+            ArrayList<Character> linha = new ArrayList<>();
+            for (int j = 0; j < colunas; j++) {
+                linha.add(grid.get(i).charAt(j));
+            }
+            matriz.add(linha);
+        }
+
+        ArrayList<ArrayList<Integer>> corpoCobra = new ArrayList<>();
+
+        boolean achou = true;
+        for (int linha = 0; linha < linhas; linha++) {
+            for (int coluna = 0; coluna < colunas; coluna++) {
+                if (grid.get(linha).charAt(coluna) == 'h') {
+                    ArrayList<Integer> posicao = new ArrayList<>();
+                    posicao.add(0,coluna);
+                    posicao.add(1,linha);
+
+                    corpoCobra.add(0,posicao);
+                    achou = false;
                     break;
                 }
             }
-            if (headX != -1) break; // Encerra o laço externo se a cabeça for encontrada
+            if (!achou) break;
         }
 
-        // Adiciona a posição da cabeça ao caminho
-        ArrayList<Integer> headPosition = new ArrayList<>();
-        headPosition.add(headX);
-        headPosition.add(headY);
-        path.add(headPosition);
+        int colunaAtual = corpoCobra.get(0).get(0);
+        int linhaAtual = corpoCobra.get(0).get(1);
 
-        // Define direções para cada caractere
-        int[][] directions = {
-                {'>', 1, 0},  // Direita
-                {'<', -1, 0}, // Esquerda
-                {'v', 0, 1},  // Baixo
-                {'^', 0, -1}  // Cima
-        };
-
-        // Variáveis para a posição atual
-        int currentX = headX;
-        int currentY = headY;
-
-        // Segue o caminho da cobra até a cauda
         while (true) {
-            boolean foundNext = false;
 
-            for (int[] dir : directions) {
-                char arrow = (char) dir[0];
-                int dx = dir[1];
-                int dy = dir[2];
-                int nextX = currentX + dx;
-                int nextY = currentY + dy;
+            if (colunaAtual + 1 < colunas && matriz.get(linhaAtual).get(colunaAtual + 1).equals('<')) {
+                colunaAtual = colunaAtual + 1;
+                ArrayList<Integer> posicao = new ArrayList<>();
+                posicao.add(0, colunaAtual);
+                posicao.add(1, linhaAtual);
+                corpoCobra.add(posicao);
 
-                // Verifica se a próxima posição está dentro da grade e é uma seta válida
-                if (nextY >= 0 && nextY < rows && nextX >= 0 && nextX < cols
-                        && grid.get(nextY).charAt(nextX) == arrow) {
-                    ArrayList<Integer> nextPosition = new ArrayList<>();
-                    nextPosition.add(nextX);
-                    nextPosition.add(nextY);
-                    path.add(nextPosition);
-                    currentX = nextX;
-                    currentY = nextY;
-                    foundNext = true;
-                    break;
-                }
+            } else if (colunaAtual - 1 >= 0 && matriz.get(linhaAtual).get(colunaAtual - 1).equals('>')) {
+
+                colunaAtual = colunaAtual - 1;
+                ArrayList<Integer> posicao = new ArrayList<>();
+                posicao.add(0, colunaAtual);
+                posicao.add(1, linhaAtual);
+                corpoCobra.add(posicao);
+
+            } else if ((linhaAtual + 1 < linhas) && matriz.get(linhaAtual + 1).get(colunaAtual).equals('^')) {
+                linhaAtual = linhaAtual + 1;
+                ArrayList<Integer> posicao = new ArrayList<>();
+                posicao.add(0, colunaAtual);
+                posicao.add(1, linhaAtual);
+                corpoCobra.add(posicao);
+
+            } else if ((linhaAtual - 1 >= 0) && matriz.get(linhaAtual - 1).get(colunaAtual).equals('v')) {
+
+                linhaAtual = linhaAtual - 1;
+                ArrayList<Integer> posicao = new ArrayList<>();
+                posicao.add(0, colunaAtual);
+                posicao.add(1, linhaAtual);
+                corpoCobra.add(posicao);
+
+            } else {
+                return corpoCobra;
             }
-
-            // Para quando não encontrar o próximo segmento
-            if (!foundNext) break;
-        }
-
-        return path;
-    }
-
-    public static void main(String[] args) {
-        ArrayList<String> grid = new ArrayList<>();
-        grid.add(" >>h   ");
-        grid.add(" ^   v ");
-        grid.add(" ^<<<< ");
-
-        ArrayList<ArrayList<Integer>> path = findSnakeOnGrid(grid);
-
-        for (ArrayList<Integer> position : path) {
-            System.out.println(position);
         }
     }
 }

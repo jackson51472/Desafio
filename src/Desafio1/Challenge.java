@@ -1,3 +1,5 @@
+package Desafio1;
+
 public class Challenge {
     public static Integer calculaTotalLeds(Integer altura, Integer largura) {
         if (altura < 1 || largura < 1) {
